@@ -1,0 +1,58 @@
+name:                s17-turbo-switch
+version:             0.1.0.0
+github:              "dmp1ce/s17-turbo-switch"
+license:             PublicDomain
+author:              "David Parrish"
+maintainer:          "daveparrish@tutanota.com"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+synopsis:            Remotely switch the work mode of an S17 miner
+category:            BitcoinMining
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/s17-turbo-switch#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- bytestring
+- libssh2
+- optparse-applicative
+- directory
+- filepath
+
+default-extensions:
+  - OverloadedStrings
+
+library:
+  source-dirs: src
+
+_ghc-options: &ghc-options
+  - -Wall
+  - -Werror
+  - -threaded
+  - -rtsopts
+  - -with-rtsopts=-N
+
+executables:
+  s17-turbo-switch:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options: *ghc-options
+    dependencies:
+    - s17-turbo-switch
+
+tests:
+  s17-turbo-switch-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options: *ghc-options
+    dependencies:
+    - s17-turbo-switch
+    - tasty
+    - tasty-hunit
