@@ -11,14 +11,17 @@ jobs:
           keys:
             - cci-haskell-v1-{{ checksum "package.yaml" }}-{{ checksum "stack.yaml" }}
       - run:
+          name: Install libssh2
+          command: apt update -yq && apt install -y -q libssh2-1-dev
+      - run:
           name: Resolve/Update Dependencies
-          command: stack setup
+          command: stack --no-terminal setup
       - run:
           name: Run tests
-          command: stack test
+          command: stack --no-terminal test
       - run:
           name: Install executable
-          command: stack install
+          command: stack --no-terminal install
       - save_cache:
           name: Cache Dependencies
           key: cci-haskell-v1-{{ checksum "package.yaml" }}-{{ checksum "stack.yaml" }}
