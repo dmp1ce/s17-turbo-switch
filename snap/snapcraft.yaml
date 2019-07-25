@@ -1,0 +1,37 @@
+name: s17-turbo-switch
+base: core18
+version: '0.1' # just for humans, typically '1.2+git' or '1.3.2'
+version-script: "grep version package.yaml | awk '{ print $NF }'"
+summary: Remotely switch the work mode of an S17 miner
+description: |
+  Remotely switch the work mode of an S17 miner. Requires the S17 miner allow SSH access.
+
+grade: stable # must be 'stable' to release into candidate/stable channels
+confinement: strict # use 'strict' once you have the right plugs and slots
+
+apps:
+  s17-turbo-switch:
+    command: s17-turbo-switch
+    plugs:
+      - network
+    environment:
+      LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib
+
+parts:
+  s17-turbo-switch:
+    # See 'snapcraft plugins'
+    plugin: nil
+    source: .
+    override-build: |
+      if [ ! -x "$(command -v stack)" ]; then
+        curl -sSL https://get.haskellstack.org/ | sh
+      fi
+      stack build --copy-bins
+    organize:
+      /root/.local/bin/s17-turbo-switch: bin/s17-turbo-switch
+    stage-packages:
+      - libssh2-1
+    build-packages:
+      - curl
+      - libssh2-1-dev
+      - pkg-config
