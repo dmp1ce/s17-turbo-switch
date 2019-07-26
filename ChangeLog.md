@@ -1,5 +1,9 @@
 # Changelog for s17-turbo-switch
 
+## 0.1.0.1
+
+- Fix networking issue where username was being used instead of hostname
+
 ## 0.1.0.0
 
 Initial release
