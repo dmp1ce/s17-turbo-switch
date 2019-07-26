@@ -1,6 +1,7 @@
 # s17-turbo-switch
 
 [![CircleCI](https://circleci.com/gh/dmp1ce/s17-turbo-switch.svg?style=svg)](https://circleci.com/gh/dmp1ce/s17-turbo-switch)
+[![Snap Status](https://build.snapcraft.io/badge/dmp1ce/s17-turbo-switch.svg)](https://build.snapcraft.io/user/dmp1ce/s17-turbo-switch)
 
 Command line utility for remotely changing work mode for S17.
 
