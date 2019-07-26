@@ -101,7 +101,7 @@ parseWorkModeValue (x:_) = (p . B.unpack) x
 parseWorkModeValue _ = Nothing
 
 execSwitchMode :: CliOptions -> IO ()
-execSwitchMode (CliOptions user pass host wm) = changeWorkMode wm user pass host
+execSwitchMode (CliOptions host user pass wm) = changeWorkMode wm user pass host
 
 mainExecParser :: IO ()
 mainExecParser = execParser opts >>= execSwitchMode
