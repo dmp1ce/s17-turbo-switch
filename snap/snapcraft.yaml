@@ -11,11 +11,18 @@ architectures:
 grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict # use 'strict' once you have the right plugs and slots
 
+plugs:
+  known-hosts-access:
+    interface: personal-files
+    read:
+    - $HOME/.ssh/known_hosts
+
 apps:
   s17-turbo-switch:
-    command: s17-turbo-switch
+    command: wrapper.sh
     plugs:
       - network
+      - known-hosts-access
     environment:
       LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib
 
@@ -37,3 +44,8 @@ parts:
       - curl
       - libssh2-1-dev
       - pkg-config
+  wrapper:
+    plugin: dump
+    source: snap/local
+    organize:
+      wrapper.sh: bin/wrapper.sh
