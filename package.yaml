@@ -5,9 +5,6 @@ license:             PublicDomain
 author:              "David Parrish"
 maintainer:          "daveparrish@tutanota.com"
 
-architectures:
-  - build-on: [amd64, i386]
-
 extra-source-files:
 - README.md
 - ChangeLog.md

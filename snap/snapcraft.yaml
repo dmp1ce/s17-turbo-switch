@@ -5,6 +5,8 @@ version-script: "grep version package.yaml | awk '{ print $NF }'"
 summary: Remotely switch the work mode of an S17 miner
 description: |
   Remotely switch the work mode of an S17 miner. Requires the S17 miner allow SSH access.
+architectures:
+  - build-on: [amd64, i386]
 
 grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict # use 'strict' once you have the right plugs and slots
