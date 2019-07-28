@@ -1,6 +1,7 @@
 module S17TurboSwitch where
 
 import Network.SSH.Client.LibSSH2 (withSSH2User, execCommands)
+import Network.SSH.Client.LibSSH2.Errors (ErrorCode (FILE))
 import qualified Data.ByteString.Lazy.Char8 as B
 import Data.Char (digitToInt)
 import System.Directory (getHomeDirectory)
@@ -11,6 +12,7 @@ import Control.Monad (when)
 import Options.Applicative
   ( execParser, info, header, progDesc, fullDesc, helper, Parser, option, long, short, metavar
   , value, help, auto, showDefault, infoOption, str)
+import Control.Exception (catches, Handler (Handler))
 
 data WorkMode = LowPower | Normal | Turbo deriving (Eq, Show, Enum, Read)
 
@@ -63,8 +65,8 @@ confFile = "/config/cgminer.conf"
 
 changeWorkMode :: WorkMode -> String -> String -> String -> IO ()
 changeWorkMode wm user pass host = do
-  h <- getHomeDirectory
-  withSSH2User (h </> ".ssh/known_hosts") user pass host 22
+  known_hosts <- ((flip (</>)) ".ssh/known_hosts") <$> getHomeDirectory
+  catches (withSSH2User known_hosts user pass host 22
     (\s -> do
         -- Get 'bitmain-work-mode' from remote
         (grep_ec, grep_output) <- execCommands s ["grep 'bitmain-work-mode' " ++ confFile]
@@ -84,8 +86,13 @@ changeWorkMode wm user pass host = do
           when (restart_ec /= 0) $ printError restart_ec restart_output
 
           -- TODO: Write timestamp file on miner so work mode changes can be rate limited
-    )
+    ))
+    [Handler $ handleSSHError known_hosts]
   where
+    handleSSHError :: String -> ErrorCode -> IO ()
+    handleSSHError kh FILE = putStrLn $ "libssh2 return a FILE error. Likely the " ++ kh
+                             ++ " file could not be found."
+    handleSSHError _ e = putStrLn $ "libssh2 error: " ++ show e
     i = fromEnum wm
     printError :: Int -> [B.ByteString] -> IO ()
     printError c m = do B.putStrLn $ B.unlines m

@@ -1,5 +1,10 @@
 # Changelog for s17-turbo-switch
 
+## 0.1.1.0
+
+- Add better error message when known_hosts cannot be found
+- Fix snap package for accessing known_hosts file
+
 ## 0.1.0.1
 
 - Fix networking issue where username was being used instead of hostname
