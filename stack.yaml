@@ -17,7 +17,7 @@
 #
 # resolver: ./custom-snapshot.yaml
 # resolver: https://example.com/snapshots/2018-01-01.yaml
-resolver: lts-13.19
+resolver: lts-14.0
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
@@ -38,8 +38,7 @@ packages:
 # using the same syntax as the packages field.
 # (e.g., acme-missiles-0.3)
 extra-deps:
-- libssh2-0.2.0.7@sha256:c45d71b62b2b72e2affda261ba7020800f5fecbcd0eeb40a804b84ed91c17773
-- haskell-src-exts-1.21.0@sha256:02421cacaa48c055551b8e5796efc543301b7ea9527a38e1385403d2b85512fb
+- libssh2-0.2.0.7@sha256:c45d71b62b2b72e2affda261ba7020800f5fecbcd0eeb40a804b84ed91c17773,3077
 
 # Override default flag values for local packages and extra-deps
 # flags: {}
