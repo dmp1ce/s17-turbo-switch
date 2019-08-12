@@ -82,7 +82,7 @@ changeWorkMode wm user pass host = do
           (sed_ec, sed_output) <- execCommands s ["sed -i '/^\"bitmain-work-mode\"/s/.*/\"bitmain-work-mode\" : \"" ++ show i ++ "\",/' " ++ confFile]
           when (sed_ec /= 0) $ printError sed_ec sed_output
 
-          (restart_ec, restart_output) <- execCommands s ["/etc/init.d/cgminer restart"]
+          (restart_ec, restart_output) <- execCommands s ["/etc/init.d/cgminer.sh restart"]
           when (restart_ec /= 0) $ printError restart_ec restart_output
 
           -- TODO: Write timestamp file on miner so work mode changes can be rate limited
