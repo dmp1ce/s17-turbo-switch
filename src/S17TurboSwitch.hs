@@ -36,47 +36,41 @@ appName = "s17-turbo-switch"
 cliOptions :: Parser CliOptions
 cliOptions = CliOptions
   <$> option str
-      ( long "host"
+        long "host"
      <> short 'H'
      <> metavar "HOST"
      <> help "Hostname (or IP) of S17 host"
-      )
   <*> option str
-      ( long "username"
+        long "username"
      <> short 'u'
      <> metavar "USERNAME"
      <> value "root"
      <> help "username to log into SSH"
      <> showDefault
-      )
   <*> option str
-      ( long "password"
+        long "password"
      <> short 'p'
      <> metavar "PASSWORD"
      <> value "admin"
      <> help "password to log into SSH"
      <> showDefault
-      )
   <*> option auto
-      ( long "workmode"
+        long "workmode"
      <> short 'm'
      <> metavar "MODE"
      <> value Normal
      <> help "LowPower, Normal or Turbo"
      <> showDefault
-      )
-  <*> optional (EventArgs
-                 <$> (argument auto (metavar "STATE"))
-                 <*> (argument auto (metavar "HARDNESS"))
-                 <*> (argument auto (metavar "ATTEMPT"))
-               )
+  <*> optional EventArgs <$> argument auto (metavar "STATE")
+                         <*> argument auto (metavar "HARDNESS")
+                         <*> argument auto (metavar "ATTEMPT")
 
 confFile :: String
 confFile = "/config/cgminer.conf"
 
 changeWorkMode :: WorkMode -> String -> String -> String -> IO ()
 changeWorkMode wm user pass host = do
-  known_hosts <- ((flip (</>)) ".ssh/known_hosts") <$> getHomeDirectory
+  known_hosts <- flip (</>) ".ssh/known_hosts" <$> getHomeDirectory
   catches (withSSH2User known_hosts user pass host 22
     (\s -> do
         -- Get 'bitmain-work-mode' from remote
