@@ -29,15 +29,16 @@ dependencies:
 default-extensions:
   - OverloadedStrings
 
-library:
-  source-dirs: src
-
 _ghc-options: &ghc-options
   - -Wall
   - -Werror
   - -threaded
   - -rtsopts
   - -with-rtsopts=-N
+
+library:
+  ghc-options: *ghc-options
+  source-dirs: src
 
 executables:
   s17-turbo-switch:
