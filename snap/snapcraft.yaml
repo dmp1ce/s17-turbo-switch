@@ -1,7 +1,6 @@
 name: s17-turbo-switch
 base: core18
-version: '0.1' # just for humans, typically '1.2+git' or '1.3.2'
-version-script: "grep version package.yaml | awk '{ print $NF }'"
+adopt-info: s17-turbo-switch
 summary: Remotely switch the work mode of an S17 miner
 description: |
   Remotely switch the work mode of an S17 miner. Requires the S17 miner allow SSH access.
@@ -25,6 +24,9 @@ parts:
     # See 'snapcraft plugins'
     plugin: nil
     source: .
+    override-pull: |
+      snapcraftctl pull
+      snapcraftctl set-version "$(grep version package.yaml | awk '{ print $NF }')"
     override-build: |
       if [ ! -x "$(command -v stack)" ]; then
         curl -sSL https://get.haskellstack.org/ | sh
