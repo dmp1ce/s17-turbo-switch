@@ -9,9 +9,10 @@ import System.FilePath ((</>))
 import Paths_s17_turbo_switch (version)
 import Data.Version (showVersion)
 import Control.Monad (when)
+import Control.Applicative (optional)
 import Options.Applicative
   ( execParser, info, header, progDesc, fullDesc, helper, Parser, option, long, short, metavar
-  , value, help, auto, showDefault, infoOption, str)
+  , value, help, auto, showDefault, infoOption, str, argument)
 import Control.Exception (catches, Handler (Handler))
 
 data WorkMode = LowPower | Normal | Turbo deriving (Eq, Show, Enum, Read)
@@ -21,7 +22,12 @@ data CliOptions = CliOptions
   , cliUsername :: String
   , cliPassword :: String
   , cliWorkMode :: WorkMode
-  } deriving Show
+  , cliCommand :: Maybe EventArgs
+  } deriving (Show, Eq)
+
+data EventArgs =  EventArgs EventState EventHardness Integer deriving (Show, Eq)
+data EventState = OK | WARNING | UNKNOWN | CRITICAL deriving (Read, Show, Eq)
+data EventHardness = SOFT | HARD deriving (Read, Show, Eq)
 
 -- Name of application (should match package.yml)
 appName :: String
@@ -59,6 +65,11 @@ cliOptions = CliOptions
      <> help "LowPower, Normal or Turbo"
      <> showDefault
       )
+  <*> optional (EventArgs
+                 <$> (argument auto (metavar "STATE"))
+                 <*> (argument auto (metavar "HARDNESS"))
+                 <*> (argument auto (metavar "ATTEMPT"))
+               )
 
 confFile :: String
 confFile = "/config/cgminer.conf"
@@ -108,10 +119,18 @@ parseWorkModeValue (x:_) = (p . B.unpack) x
 parseWorkModeValue _ = Nothing
 
 execSwitchMode :: CliOptions -> IO ()
-execSwitchMode (CliOptions host user pass wm) = changeWorkMode wm user pass host
+execSwitchMode (CliOptions host user pass wm Nothing) = changeWorkMode wm user pass host
+execSwitchMode (CliOptions host user pass wm (Just (EventArgs state hardness _)))
+  | (state == CRITICAL || state == WARNING) && hardness == HARD = do
+      putStrLn $ "Miner in CRITICAL HARD state. Attempting to change work mode to " ++ show wm ++ "."
+      changeWorkMode wm user pass host
+  | otherwise = return ()
 
 mainExecParser :: IO ()
-mainExecParser = execParser opts >>= execSwitchMode
+mainExecParser = mainExecParser' >>= execSwitchMode
+
+mainExecParser' :: IO CliOptions
+mainExecParser' = execParser opts
   where
     opts = info (helper <*> versionOption <*> cliOptions)
       ( fullDesc

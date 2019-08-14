@@ -57,3 +57,4 @@ tests:
     - s17-turbo-switch
     - tasty
     - tasty-hunit
+    - optparse-applicative
