@@ -23,7 +23,7 @@ parseCliTests :: TestTree
 parseCliTests = testGroup "parse Cli tests"
   [ testCase "parse event arguments" $ do
     r <- handleParseResult $ parsePureCli ["-H", "10.0.0.163", "OK", "HARD", "3"]
-    r @?= CliOptions "10.0.0.163" "root" "admin" Normal (Just $ EventArgs OK HARD 3)
+    r @?= CliOptions "10.0.0.163" "root" "admin" Normal ProMiner (Just $ EventArgs OK HARD 3)
   ]
 
 workModeTests :: TestTree

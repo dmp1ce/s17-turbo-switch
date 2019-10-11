@@ -16,12 +16,14 @@ import Options.Applicative
 import Control.Exception (catches, Handler (Handler))
 
 data WorkMode = LowPower | Normal | Turbo deriving (Eq, Show, Enum, Read)
+data MinerType = NormalMiner | ProMiner deriving (Eq, Show, Read)
 
 data CliOptions = CliOptions
   { cliHost :: String
   , cliUsername :: String
   , cliPassword :: String
   , cliWorkMode :: WorkMode
+  , cliMinerType :: MinerType
   , cliCommand :: Maybe EventArgs
   } deriving (Show, Eq)
 
@@ -63,6 +65,14 @@ cliOptions = CliOptions
      <> metavar "MODE"
      <> value Normal
      <> help "LowPower, Normal or Turbo"
+     <> showDefault
+      )
+  <*> option auto
+      ( long "minertype"
+     <> short 't'
+     <> metavar "MINER_TYPE"
+     <> value ProMiner
+     <> help "NormalMiner, ProMiner"
      <> showDefault
       )
   <*> optional (EventArgs <$> argument auto (metavar "STATE")
@@ -117,8 +127,11 @@ parseWorkModeValue (x:_) = (p . B.unpack) x
 parseWorkModeValue _ = Nothing
 
 execSwitchMode :: CliOptions -> IO ()
-execSwitchMode (CliOptions host user pass wm Nothing) = changeWorkMode wm user pass host
-execSwitchMode (CliOptions host user pass wm (Just (EventArgs state hardness _)))
+execSwitchMode (CliOptions _ _ _ Turbo NormalMiner _) = error "Turbo mode not allow for normal S17 miner"
+execSwitchMode (CliOptions host user pass wm NormalMiner state) =
+  execSwitchMode (CliOptions host user pass ( toEnum ((fromEnum wm)+1) ) ProMiner state)
+execSwitchMode (CliOptions host user pass wm ProMiner Nothing) = changeWorkMode wm user pass host
+execSwitchMode (CliOptions host user pass wm ProMiner (Just (EventArgs state hardness _)))
   | (state == CRITICAL || state == WARNING) && hardness == HARD = do
       putStrLn $ "Miner in CRITICAL HARD state. Attempting to change work mode to " ++ show wm ++ "."
       changeWorkMode wm user pass host

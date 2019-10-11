@@ -1,5 +1,9 @@
 # Changelog for s17-turbo-switch
 
+## 1.0.1.0
+
+- Add option for Normal and Pro miners
+
 ## 0.1.1.0
 
 - Add better error message when known_hosts cannot be found

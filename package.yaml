@@ -1,5 +1,5 @@
 name:                s17-turbo-switch
-version:             1.0.0.0
+version:             1.0.1.0
 github:              "dmp1ce/s17-turbo-switch"
 license:             PublicDomain
 author:              "David Parrish"
@@ -29,7 +29,7 @@ dependencies:
 default-extensions:
   - OverloadedStrings
 
-_ghc-options: &ghc-options
+_ghc-options-exe: &ghc-options-exe
   - -Wall
   - -Werror
   - -threaded
@@ -37,14 +37,16 @@ _ghc-options: &ghc-options
   - -with-rtsopts=-N
 
 library:
-  ghc-options: *ghc-options
+  ghc-options:
+    -Wall
+    -Werror
   source-dirs: src
 
 executables:
   s17-turbo-switch:
     main:                Main.hs
     source-dirs:         app
-    ghc-options: *ghc-options
+    ghc-options: *ghc-options-exe
     dependencies:
     - s17-turbo-switch
 
@@ -52,7 +54,7 @@ tests:
   s17-turbo-switch-test:
     main:                Spec.hs
     source-dirs:         test
-    ghc-options: *ghc-options
+    ghc-options: *ghc-options-exe
     dependencies:
     - s17-turbo-switch
     - tasty
